@@ -18,3 +18,7 @@ data/__pycache__/
 .DS_Store
 Thumbs.db
 
+data/clientes.json
+data/veiculos.json
+data/locacoes.json
+data/usuarios.json

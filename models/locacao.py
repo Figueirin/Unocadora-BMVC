@@ -12,7 +12,7 @@ class Locacao:
     def calcular_total(self) -> float:
 
         d_inicio = datetime.strptime(self.data_inicio, "%Y-%m-%d")
-        d_fim = datetime.strptime(self.data_fim, "%Y-%m-%d")
+        d_fim = datetime.strptime(self.data_final, "%Y-%m-%d")
         qtd_dias = (d_fim - d_inicio).days
         qtd_dias = max(1, qtd_dias)
 
