@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+models/__pycache__/
+controllers/__pycache__/
+static/__pycache__/
+views/__pycache__/
+data/__pycache__/
+
+# Caches de IDE e editores
+.vscode/
+.idea/
+
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
