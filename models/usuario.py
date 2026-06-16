@@ -9,7 +9,7 @@ class Usuario:
 
     @username.setter
     def username(self, valor: str):
-        if not valor in len(valor.strip()) == 0:
+        if not valor or len(valor.strip()) == 0:
             raise ValueError("O nome de usuario nao pode ser vazio")
         
         self.__username = valor.strip().lower()
@@ -20,10 +20,13 @@ class Usuario:
 
     @password.setter
     def password(self, valor: str):
-        if not valor in len(valor.strip()):
+        if not valor or len(valor.strip()) == 0:
             raise ValueError("A senha nao pode ser vazia")
 
         self.__password = valor
+
+    def verificar_senha(self, senha_digitada: str) -> bool:
+        return self.password == senha_digitada
         
     def to_dict(self) -> dict:
         return{
