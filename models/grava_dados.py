@@ -58,9 +58,9 @@ class GravaDados:
         dados = [c.to_dict() for c in usuario]
         self._salvar_json("usuarios.json", dados)
 
-    def carregar_usuario(self) -> list[Usuario]:
+    def carregar_usuarios(self) -> list[Usuario]:
 
-        dados = self.ler_json_json("usuarios.json", dados)
+        dados = self.ler_json("usuarios.json")
         usuarios = []
         for item in dados:
             try:
@@ -122,7 +122,7 @@ class GravaDados:
 
             cliente = clientes_map.get(cpf)
             veiculo = veiculos_map.get(placa)
-            
+
             if cliente and veiculo:
 
                 l = Locacao(cliente, veiculo, data_inicio, data_final)
