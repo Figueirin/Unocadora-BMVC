@@ -32,7 +32,7 @@ def portal():
 
         if ctl.login(username, password):
             response.set_cookie("usuario", username, secret=SECRET_KEY, path='/')
-
+            return redirect('/')
         else:
             erro = "Usuario ou senha incorretos"
 
@@ -73,7 +73,7 @@ def clientes():
 
     return template('clientes', clientes=ctl.clientes, erro=erro, usuario=obter_usuario_logado())
 
-@app.route('/veiculos', method= ['GET', 'POST'])
+@app.route('/veiculos', method=['GET', 'POST'])
 def veiculos():
     if not obter_usuario_logado():
         return redirect('/portal')
@@ -88,15 +88,14 @@ def veiculos():
         tipo = request.forms.get('tipo')
 
         try:
-            ctl.cadastrar_veiculo(placa, modelo, marca, int(ano, tipo))
+            ctl.cadastrar_veiculo(placa, modelo, marca, int(ano), tipo)
             return redirect('/veiculos')
-
         except ValueError as e:
             erro = str(e)
 
-        return template('veiculos', veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
+    return template('veiculos', veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
 
-@app.route('/locacao', method=['GET','POST'])
+@app.route('/locacao', method=['GET', 'POST'])
 def locacao():
     if not obter_usuario_logado():
         return redirect('/portal')
@@ -112,18 +111,17 @@ def locacao():
         try:
             ctl.cadastrar_locacao(cliente_cpf, veiculo_placa, data_inicio, data_final)
             return redirect('/historico')
-
         except ValueError as e:
             erro = str(e)
 
     return template('locacao', clientes=ctl.clientes, veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
 
-@app.route('historico')
+@app.route('/historico')
 def historico():
     if not obter_usuario_logado():
         return redirect('/portal')
     
-    return template('historico', locacoes=ctl.locacoes, usuarios=obter_usuario_logado())
+    return template('historico', locacoes=ctl.locacoes, usuario=obter_usuario_logado())
 
 if __name__ == '__main__':
     run(app, host='0.0.0.0', port=8080, debug=True)
