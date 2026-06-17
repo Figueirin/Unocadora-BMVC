@@ -4,7 +4,7 @@ from bottle import Bottle, run, request, redirect, template, response, static_fi
 from controllers.aplicacao import Aplicacao
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-bottle.TEMPLATE_PATH.insert(0, os.path.join(BASE_DIR, 'views', 'html'))
+bottle.TEMPLATE_PATH.insert(0, os.path.join(BASE_DIR, 'views'))
 
 app = Bottle()
 ctl = Aplicacao()
@@ -36,7 +36,7 @@ def portal():
         else:
             erro = "Usuario ou senha incorretos"
 
-    return template('login', erro=erro)
+    return template('login.html', erro=erro)
 
 @app.route('/logout')
 def logout():
@@ -53,7 +53,7 @@ def home():
         "total_veiculos": len(ctl.veiculos),
         "total_locacoes": len(ctl.locacoes)
     }
-    return template('home', stats=stats, usuario=obter_usuario_logado())
+    return template('home.html', stats=stats, usuario=obter_usuario_logado())
 
 @app.route('/clientes', method=['GET', 'POST'])
 def clientes():
@@ -71,7 +71,7 @@ def clientes():
         except ValueError as e:
             erro = str(e)
 
-    return template('clientes', clientes=ctl.clientes, erro=erro, usuario=obter_usuario_logado())
+    return template('clientes.html', clientes=ctl.clientes, erro=erro, usuario=obter_usuario_logado())
 
 @app.route('/veiculos', method=['GET', 'POST'])
 def veiculos():
@@ -93,7 +93,7 @@ def veiculos():
         except ValueError as e:
             erro = str(e)
 
-    return template('veiculos', veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
+    return template('veiculos.html', veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
 
 @app.route('/locacao', method=['GET', 'POST'])
 def locacao():
@@ -114,14 +114,14 @@ def locacao():
         except ValueError as e:
             erro = str(e)
 
-    return template('locacao', clientes=ctl.clientes, veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
+    return template('locacao.html', clientes=ctl.clientes, veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
 
 @app.route('/historico')
 def historico():
     if not obter_usuario_logado():
         return redirect('/portal')
     
-    return template('historico', locacoes=ctl.locacoes, usuario=obter_usuario_logado())
+    return template('historico.html', locacoes=ctl.locacoes, usuario=obter_usuario_logado())
 
 if __name__ == '__main__':
     run(app, host='0.0.0.0', port=8080, debug=True)

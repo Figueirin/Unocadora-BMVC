@@ -1,0 +1,31 @@
+% rebase('layout.html', usuario=usuario)
+
+<h2>Histórico de Locações</h2>
+<div style="margin-top: 20px;">
+    <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>Cliente</th>
+                <th>Veículo (Placa)</th>
+                <th>Tipo</th>
+                <th>Período</th>
+                <th>Valor Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            % if not locacoes:
+                <tr><td colspan="5">Nenhuma locação realizada ainda.</td></tr>
+            % else:
+                % for l in locacoes:
+                    <tr>
+                        <td>{{l.cliente.nome}} (CPF: {{l.cliente.cpf}})</td>
+                        <td>{{l.veiculo.marca}} {{l.veiculo.modelo}} ({{l.veiculo.placa}})</td>
+                        <td>{{l.veiculo.__class__.__name__}}</td>
+                        <td>De {{l.data_inicio}} até {{l.data_final}}</td>
+                        <td style="color: green; font-weight: bold;">R$ {{f"{l.calcular_total():.2f}"}}</td>
+                    </tr>
+                % end
+            % end
+        </tbody>
+    </table>
+</div>
