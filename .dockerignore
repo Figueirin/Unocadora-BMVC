@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.vscode/
+data/clientes.json
+data/veiculos.json
+data/locacoes.json
