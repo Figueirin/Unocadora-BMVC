@@ -42,7 +42,7 @@ class GravaDados:
 
     def carregar_clientes(self) -> list[Cliente]:
 
-        dados = self._salvar_json("clientes.json")
+        dados = self.ler_json("clientes.json")
         clientes = []
         for item in dados:
             try:
@@ -60,11 +60,11 @@ class GravaDados:
 
     def carregar_usuario(self) -> list[Usuario]:
 
-        dados = self._salvar_json("usuarios.json", dados)
+        dados = self.ler_json_json("usuarios.json", dados)
         usuarios = []
         for item in dados:
             try:
-                c = Cliente(item["username"], item["password"])
+                c = Usuario(item["username"], item["password"])
                 usuarios.append(c)
             except ValueError:
                 continue
@@ -101,5 +101,36 @@ class GravaDados:
             except ValueError:
                 continue
         return  veiculos
+
+    
+    def salvar_locacoes(self, locacoes: list[Locacao]):
+        dados = [l.to_dict() for l in locacoes]
+        self._salvar_json("locacoes.json", dados)
+
+    def carregar_locacoes(self, clientes: list[Cliente], veiculos: list) -> list[Locacao]:
+        dados = self.ler_json("locacoes.json")
+        locacoes = []
+
+        clientes_map = {c.cpf: c for c in clientes}
+        veiculos_map = {v.placa: v for v in veiculos}
+
+        for item in dados:
+            cpf = item.get("cliente_cpf")
+            placa = item.get("veiculo_placa")
+            data_inicio = item.get("data_inicio")
+            data_final = item.get("data_final")
+
+            cliente = clientes_map.get(cpf)
+            veiculo = veiculos_map.get(placa)
+            
+            if cliente and veiculo:
+
+                l = Locacao(cliente, veiculo, data_inicio, data_final)
+                locacoes.append(l)
+                
+        return locacoes
+
+
+
 
 
