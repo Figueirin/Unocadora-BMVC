@@ -1,5 +1,10 @@
-class Cliente:
-    def __init__(self, nome: str, cpf: str, telefone: str):
+from models.usuario import Usuario
+
+class Cliente(Usuario):
+
+    def __init__(self, nome: str, cpf: str, telefone: str, username: str, password: str):
+        super().__init__(username, password)
+
         self.nome = nome
         self.cpf = cpf
         self.telefone = telefone
@@ -40,5 +45,8 @@ class Cliente:
         return{
             "nome": self.nome,
             "cpf": self.cpf,
-            "telefone": self.telefone
+            "telefone": self.telefone,
+            "username": self.username,
+            "password": self.password
         }
+
