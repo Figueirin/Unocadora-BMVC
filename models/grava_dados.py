@@ -51,7 +51,7 @@ class GravaDados:
                     cpf = item["cpf"],
                     telefone = item["telefone"],
                     username = item.get('username', item['cpf']),
-                    password = item.get('password', '123456')
+                    password = item.get('password', )
                 )
                 
                 clientes.append(c)

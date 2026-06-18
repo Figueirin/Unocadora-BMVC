@@ -10,7 +10,11 @@
         <strong>🚗 Unocadora</strong> | 
         
         <!-- Menu Público (Todos veem) -->
-        <a href="/">Cardápio</a> | 
+        % if usuario == 'admin':
+            <a href="/">Início</a> | 
+        % else:
+            <a href="/">Veículos</a> | 
+        % end
 
         % if not usuario:
             <!-- Menu para Visitante (Não logado) -->
