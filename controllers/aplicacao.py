@@ -16,16 +16,37 @@ class Aplicacao:
         for u in self.usuarios:
             if u.username == username.strip().lower() and u.verificar_senha(password):
                 return True
+        
+        for c in self.clientes:
+            if c.username == username.strip().lower() and c.verificar_senha(password):
+                return True
+
         return False
 
-    def cadastrar_cliente(self, nome: str, cpf: str, telefone: str):
+    def cadastrar_cliente(self, nome: str, cpf: str, telefone: str, username: str, password: str):
+
+        username_limpo = username.strip().lower()
+
+        for u in self.usuarios:
+            if u.username == username_limpo:
+                raise ValueError("Nome de usuario já cadastrado")
+
         for c in self.clientes:
+            if c.username == username_limpo:
+                raise ValueError("Nome de usuario já cadastrado")
             if c.cpf == cpf:
                 raise ValueError("CPF ja cadastrado")
 
-        novo_cliente = Cliente(nome, cpf, telefone)
+        novo_cliente = Cliente(nome=nome, cpf=cpf, telefone=telefone, username=username_limpo, password=password)
         self.clientes.append(novo_cliente)
         self.db.salvar_clientes(self.clientes)
+
+    def obter_cliente_por_user(self, username: str) -> Cliente:
+        username_limpo = username.strip().lower()
+        for c in self.clientes:
+            if c.username == username_limpo:
+                return c
+        return None
 
     def cadastrar_veiculo(self, placa: str, modelo: str, marca: str, ano: int, tipo: str):
         for v in self.veiculos:

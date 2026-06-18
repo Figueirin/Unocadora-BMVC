@@ -43,40 +43,78 @@ def logout():
     response.delete_cookie("usuario", path='/')
     return redirect('/portal')
 
+@app.route('/cadastro', method=['GET', 'POST'])
+def cadastro():
+    if obter_usuario_logado():
+        return redirect('/')
+
+    erro = None
+
+    if request.method == 'POST':
+        nome = request.forms.get('nome')
+        cpf = request.forms.get('cpf')
+        telefone = request.forms.get('telefone')
+        username = request.forms.get('username')
+        password = request.forms.get('password')
+
+        try:
+            ctl.cadastrar_cliente(nome, cpf, telefone, username, password)
+            response.set_cookie("usuario", username, secret=SECRET_KEY, path='/')
+            return redirect('/')
+        except ValueError as e:
+            erro = str(e)
+
+    return template('cadastro.html', erro=erro)
+
 @app.route('/')
 def home():
-    if not obter_usuario_logado():
+    username = obter_usuario_logado()
+    if not username:
         return redirect('/portal')
 
-    stats = {
-        "total_clientes": len(ctl.clientes),
-        "total_veiculos": len(ctl.veiculos),
-        "total_locacoes": len(ctl.locacoes)
-    }
-    return template('home.html', stats=stats, usuario=obter_usuario_logado())
+    cliente = ctl.obter_cliente_por_user(username)
+    if cliente:
+        return template('marketplace.html', veiculos=ctl.veiculos, usuario=username)
+    else:
+        stats = {
+            "total_clientes": len(ctl.clientes),
+            "total_veiculos": len(ctl.veiculos),
+            "total_locacoes": len(ctl.locacoes)
+        }
+        return template('home.html', stats=stats, usuario=username)
 
 @app.route('/clientes', method=['GET', 'POST'])
 def clientes():
-    if not obter_usuario_logado():
+    username = obter_usuario_logado()
+    if not username:
         return redirect('/portal')
+
+    if ctl.obter_cliente_por_user(username):
+        return redirect('/')
 
     erro = None
     if request.method == 'POST':    
         nome = request.forms.get('nome')
         cpf = request.forms.get('cpf')
         telefone = request.forms.get('telefone')
+        user_cli = request.forms.get('username')
+        pass_cli = request.forms.get('password')
         try:
-            ctl.cadastrar_cliente(nome, cpf, telefone)
+            ctl.cadastrar_cliente(nome, cpf, telefone, user_cli, pass_cli)
             return redirect('/clientes')
         except ValueError as e:
             erro = str(e)
 
-    return template('clientes.html', clientes=ctl.clientes, erro=erro, usuario=obter_usuario_logado())
+    return template('clientes.html', clientes=ctl.clientes, erro=erro, usuario=username)
 
 @app.route('/veiculos', method=['GET', 'POST'])
 def veiculos():
-    if not obter_usuario_logado():
+    username = obter_usuario_logado()
+    if not username:
         return redirect('/portal')
+
+    if ctl.obter_cliente_por_user(username):
+        return redirect('/')
 
     erro = None
 
@@ -93,17 +131,23 @@ def veiculos():
         except ValueError as e:
             erro = str(e)
 
-    return template('veiculos.html', veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
+    return template('veiculos.html', veiculos=ctl.veiculos, erro=erro, usuario=username)
 
 @app.route('/locacao', method=['GET', 'POST'])
 def locacao():
-    if not obter_usuario_logado():
+    username = obter_usuario_logado()
+    if not username:
         return redirect('/portal')
 
+    cliente = ctl.obter_cliente_por_user(username)
     erro = None
 
     if request.method == 'POST':
-        cliente_cpf = request.forms.get('cliente_cpf')
+        if cliente:
+            cliente_cpf = cliente.cpf
+        else:
+            cliente_cpf = request.forms.get('cliente_cpf')
+
         veiculo_placa = request.forms.get('veiculo_placa')
         data_inicio = request.forms.get('data_inicio')
         data_final = request.forms.get('data_final')
@@ -114,14 +158,32 @@ def locacao():
         except ValueError as e:
             erro = str(e)
 
-    return template('locacao.html', clientes=ctl.clientes, veiculos=ctl.veiculos, erro=erro, usuario=obter_usuario_logado())
+    placa_pre_selecionada = request.query.get('placa', '')
+
+    return template('locacao.html', 
+                    clientes=ctl.clientes, 
+                    veiculos=ctl.veiculos, 
+                    erro=erro, 
+                    usuario=username,
+                    is_cliente=(cliente is not None),
+                    placa_selecionada=placa_pre_selecionada)
 
 @app.route('/historico')
 def historico():
-    if not obter_usuario_logado():
+
+    username = obter_usuario_logado()
+    if not username:
         return redirect('/portal')
+
+    cliente = ctl.obter_cliente_por_user(username)
+
+    if cliente:
+        locacoes_filtradas = [l for l in ctl.locacoes if l.cliente.cpf == cliente.cpf]
+        return template('historico.html', locacoes=locacoes_filtradas, usuario=username, is_cliente=True)
+    else:
+        return template('historico.html', locacoes=ctl.locacoes, usuario=username, is_cliente=False)
     
-    return template('historico.html', locacoes=ctl.locacoes, usuario=obter_usuario_logado())
+    
 
 if __name__ == '__main__':
     run(app, host='0.0.0.0', port=8080, debug=True)
