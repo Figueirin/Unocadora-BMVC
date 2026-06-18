@@ -6,7 +6,6 @@
 % end
 
 <div style="display: flex; gap: 40px; margin-top: 20px;">
-    <!-- Lista -->
     <div style="flex: 2;">
         <h3>Lista de Clientes</h3>
         <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
@@ -15,17 +14,19 @@
                     <th>Nome</th>
                     <th>CPF</th>
                     <th>Telefone</th>
+                    <th>Nome de Usuário</th>
                 </tr>
             </thead>
             <tbody>
                 % if not clientes:
-                    <tr><td colspan="3">Nenhum cliente cadastrado.</td></tr>
+                    <tr><td colspan="4">Nenhum cliente cadastrado.</td></tr>
                 % else:
                     % for c in clientes:
                         <tr>
                             <td>{{c.nome}}</td>
                             <td>{{c.cpf}}</td>
                             <td>{{c.telefone}}</td>
+                            <td>{{c.username}}</td>
                         </tr>
                     % end
                 % end
@@ -33,7 +34,6 @@
         </table>
     </div>
     
-    <!-- Formulário -->
     <div style="flex: 1; border: 1px solid #ccc; padding: 20px; border-radius: 5px; height: fit-content;">
         <h3>Novo Cliente</h3>
         <form action="/clientes" method="POST">
@@ -48,6 +48,14 @@
             <p>
                 <label>Telefone:</label><br>
                 <input type="text" name="telefone" required style="width: 100%;">
+            </p>
+            <p>
+                <label>Usuário (Login):</label><br>
+                <input type="text" name="username" required style="width: 100%;">
+            </p>
+            <p>
+                <label>Senha:</label><br>
+                <input type="password" name="password" required style="width: 100%;">
             </p>
             <button type="submit" style="width: 100%;">Cadastrar</button>
         </form>

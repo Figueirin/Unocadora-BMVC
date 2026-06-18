@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - Unocadora</title>
+</head>
+<body style="font-family: sans-serif; display: flex; justify-content: center; margin-top: 50px;">
+    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 320px;">
+        <h2>Criar Conta</h2>
+        <p>Registre-se para poder alugar veículos</p>
+        
+        % if erro:
+            <p style="color: red;">{{erro}}</p>
+        % end
+        
+        <form action="/cadastro" method="POST">
+            <p>
+                <label>Nome Completo:</label><br>
+                <input type="text" name="nome" required style="width: 100%;">
+            </p>
+            <p>
+                <label>CPF:</label><br>
+                <input type="text" name="cpf" required placeholder="Apenas 11 números" style="width: 100%;">
+            </p>
+            <p>
+                <label>Telefone:</label><br>
+                <input type="text" name="telefone" required style="width: 100%;">
+            </p>
+            <p>
+                <label>Nome de Usuário:</label><br>
+                <input type="text" name="username" required style="width: 100%;">
+            </p>
+            <p>
+                <label>Senha:</label><br>
+                <input type="password" name="password" required style="width: 100%;">
+            </p>
+            <button type="submit" style="width: 100%; padding: 10px;">Cadastrar e Logar</button>
+        </form>
+        <p style="text-align: center; margin-top: 15px; font-size: 0.9em;">
+            Já tem conta? <a href="/portal">Faça login</a>
+        </p>
+    </div>
+</body>
+</html>

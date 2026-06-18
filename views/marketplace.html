@@ -1,0 +1,22 @@
+% rebase('layout.html', usuario=usuario)
+
+<h2>Veículos Disponíveis para Locação</h2>
+<p>Escolha um de nossos veículos abaixo para reservar:</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+    % for v in veiculos:
+        % tipo_nome = v.__class__.__name__
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 260px; background-color: #fafafa;">
+            <h3 style="margin: 0 0 10px 0;">{{v.marca}} {{v.modelo}}</h3>
+            <p style="margin: 5px 0;"><strong>Ano:</strong> {{v.ano}}</p>
+            <p style="margin: 5px 0;"><strong>Categoria:</strong> {{tipo_nome}}</p>
+            <p style="margin: 5px 0;"><strong>Placa:</strong> {{v.placa}}</p>
+            <p style="margin: 15px 0; font-size: 18px; color: green; font-weight: bold;">
+                Diária: R$ {{f"{v.calcular_diaria():.2f}".replace('.', ',')}}
+            </p>
+            <a href="/locacao?placa={{v.placa}}" style="display: block; text-align: center; background-color: #007bff; color: white; padding: 8px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                Reservar este
+            </a>
+        </div>
+    % end
+</div>

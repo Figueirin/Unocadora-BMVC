@@ -7,24 +7,32 @@
 
 <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; max-width: 500px; margin-top: 20px;">
     <form action="/locacao" method="POST">
-        <p>
-            <label>Cliente:</label><br>
-            <select name="cliente_cpf" required style="width: 100%;">
-                <option value="">-- Selecione o Cliente --</option>
-                % for c in clientes:
-                    <option value="{{c.cpf}}">{{c.nome}} (CPF: {{c.cpf}})</option>
-                % end
-            </select>
-        </p>
+        
+        <!-- Se NÃO for cliente (for admin), mostra a seleção de qual cliente fará a locação -->
+        % if not is_cliente:
+            <p>
+                <label>Cliente:</label><br>
+                <select name="cliente_cpf" required style="width: 100%;">
+                    <option value="">-- Selecione o Cliente --</option>
+                    % for c in clientes:
+                        <option value="{{c.cpf}}">{{c.nome}} (CPF: {{c.cpf}})</option>
+                    % end
+                </select>
+            </p>
+        % end
+
+        <!-- Seleção de Veículo -->
         <p>
             <label>Veículo:</label><br>
             <select name="veiculo_placa" required style="width: 100%;">
                 <option value="">-- Selecione o Veículo --</option>
                 % for v in veiculos:
-                    <option value="{{v.placa}}">{{v.marca}} {{v.modelo}} (Placa: {{v.placa}}) - R$ {{v.calcular_diaria()}}/dia</option>
+                    % selecionado = 'selected' if v.placa == placa_selecionada else ''
+                    <option value="{{v.placa}}" {{selecionado}}>{{v.marca}} {{v.modelo}} (Placa: {{v.placa}}) - R$ {{v.calcular_diaria()}}/dia</option>
                 % end
             </select>
         </p>
+        
         <p>
             <label>Data de Início:</label><br>
             <input type="date" name="data_inicio" required style="width: 100%;">
