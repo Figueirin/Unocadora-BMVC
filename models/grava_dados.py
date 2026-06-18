@@ -46,12 +46,17 @@ class GravaDados:
         clientes = []
         for item in dados:
             try:
-                c = Cliente(item["nome"], item["cpf"], item["telefone"])
+                c = Cliente(
+                    nome = item["nome"],
+                    cpf = item["cpf"],
+                    telefone = item["telefone"],
+                    username = item["username"],
+                    password = item["password"]
+                )
+                
                 clientes.append(c)
             except ValueError:
-
                 continue
-
         return clientes
 
     def salvar_usuarios(self, usuario:list[Usuario]):
