@@ -8,13 +8,27 @@
 <body style="font-family: sans-serif; margin: 20px;">
     <nav style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc;">
         <strong>🚗 Unocadora</strong> | 
-        <a href="/">Dashboard</a> | 
-        <a href="/clientes">Clientes</a> | 
-        <a href="/veiculos">Veículos</a> | 
-        <a href="/locacao">Nova Locação</a> | 
-        <a href="/historico">Histórico</a> |
-        <span>(Usuário: {{usuario}})</span> |
-        <a href="/logout" style="color: red;">Sair</a>
+        
+        <!-- Menu Público (Todos veem) -->
+        <a href="/">Cardápio</a> | 
+
+        % if not usuario:
+            <!-- Menu para Visitante (Não logado) -->
+            <a href="/portal" style="font-weight: bold; color: blue;">Entrar (Login)</a> | 
+            <a href="/cadastro" style="font-weight: bold; color: blue;">Cadastrar-se</a>
+        % else:
+            <!-- Menu para Logados (Cliente ou Admin) -->
+            % if usuario == "admin":
+                <!-- Apenas Admin vê cadastro de clientes e veículos -->
+                <a href="/clientes">Clientes</a> | 
+                <a href="/veiculos">Veículos</a> | 
+                <a href="/locacao">Nova Locação</a> | 
+            % end
+            
+            <a href="/historico">Histórico</a> |
+            <span>(Olá, {{usuario}})</span> |
+            <a href="/logout" style="color: red;">Sair</a>
+        % end
     </nav>
     <div>
         {{!base}}

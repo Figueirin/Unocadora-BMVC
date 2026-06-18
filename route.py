@@ -70,11 +70,11 @@ def cadastro():
 def home():
     username = obter_usuario_logado()
     if not username:
-        return redirect('/portal')
+        return template('cardapio.html', veiculos=ctl.veiculos, usuario=None)
 
     cliente = ctl.obter_cliente_por_user(username)
     if cliente:
-        return template('marketplace.html', veiculos=ctl.veiculos, usuario=username)
+        return template('cardapio.html', veiculos=ctl.veiculos, usuario=username)
     else:
         stats = {
             "total_clientes": len(ctl.clientes),
