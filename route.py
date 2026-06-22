@@ -69,12 +69,25 @@ def cadastro():
 @app.route('/')
 def home():
     username = obter_usuario_logado()
+    
+    # Captura parâmetros opcionais de busca de veículo disponível por período
+    data_inicio = request.query.get('data_inicio', '')
+    data_final = request.query.get('data_final', '')
+    
+    erro = None
+    veiculos_filtrados = ctl.veiculos
+    if data_inicio and data_final:
+        try:
+            veiculos_filtrados = ctl.obter_veiculos_disponiveis(data_inicio, data_final)
+        except ValueError as e:
+            erro = str(e)
+
     if not username:
-        return template('catalogo.html', veiculos=ctl.veiculos, usuario=None)
+        return template('catalogo.html', veiculos=veiculos_filtrados, usuario=None, data_inicio=data_inicio, data_final=data_final, erro=erro)
 
     cliente = ctl.obter_cliente_por_user(username)
     if cliente:
-        return template('catalogo.html', veiculos=ctl.veiculos, usuario=username)
+        return template('catalogo.html', veiculos=veiculos_filtrados, usuario=username, data_inicio=data_inicio, data_final=data_final, erro=erro)
     else:
         stats = {
             "total_clientes": len(ctl.clientes),
@@ -142,6 +155,10 @@ def locacao():
     cliente = ctl.obter_cliente_por_user(username)
     erro = None
 
+    data_inicio = ""
+    data_final = ""
+    placa_pre_selecionada = ""
+
     if request.method == 'POST':
         if cliente:
             cliente_cpf = cliente.cpf
@@ -157,16 +174,40 @@ def locacao():
             return redirect('/historico')
         except ValueError as e:
             erro = str(e)
+            placa_pre_selecionada = veiculo_placa
+    else:
+        data_inicio = request.query.get('data_inicio', '')
+        data_final = request.query.get('data_final', '')
+        placa_pre_selecionada = request.query.get('placa', '')
 
-    placa_pre_selecionada = request.query.get('placa', '')
+    # Filtrar veículos disponíveis se as datas forem fornecidas
+    veiculos_exibidos = list(ctl.veiculos)
+    if data_inicio and data_final:
+        try:
+            veiculos_exibidos = ctl.obter_veiculos_disponiveis(data_inicio, data_final)
+            # Garante que a placa pré-selecionada esteja na lista (mesmo se estiver indisposta, para o drop-down renderizar)
+            # Mas na validação do POST vai falhar, o que é o comportamento esperado.
+            if placa_pre_selecionada:
+                veiculo_alvo = None
+                for v in ctl.veiculos:
+                    if v.placa == placa_pre_selecionada.upper():
+                        veiculo_alvo = v
+                        break
+                if veiculo_alvo and veiculo_alvo not in veiculos_exibidos:
+                    veiculos_exibidos.append(veiculo_alvo)
+        except ValueError as e:
+            if not erro:
+                erro = str(e)
 
     return template('locacao.html', 
                     clientes=ctl.clientes, 
-                    veiculos=ctl.veiculos, 
+                    veiculos=veiculos_exibidos, 
                     erro=erro, 
                     usuario=username,
                     is_cliente=(cliente is not None),
-                    placa_selecionada=placa_pre_selecionada)
+                    placa_selecionada=placa_pre_selecionada,
+                    data_inicio=data_inicio,
+                    data_final=data_final)
 
 @app.route('/historico')
 def historico():

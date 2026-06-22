@@ -26,10 +26,37 @@ class Cliente(Usuario):
     
     @cpf.setter
     def cpf(self, valor: str):
-        if not valor or len(valor.strip()) < 11:
-            raise ValueError("O CPF deve conter 11 numeros")
+        import re
+        if not valor:
+            raise ValueError("O CPF não pode ser vazio")
+            
+        # Limpa todos os caracteres não numéricos
+        valor_limpo = re.sub(r'\D', '', valor)
         
-        self.__cpf = valor
+        if len(valor_limpo) != 11:
+            raise ValueError("O CPF deve conter exatamente 11 dígitos numéricos")
+            
+        # CPFs com todos os dígitos repetidos são inválidos
+        if valor_limpo in [str(i)*11 for i in range(10)]:
+            raise ValueError("CPF inválido (todos os dígitos são iguais)")
+            
+        # Validação do primeiro dígito verificador
+        soma = sum(int(valor_limpo[i]) * (10 - i) for i in range(9))
+        resto = (soma * 10) % 11
+        if resto in (10, 11):
+            resto = 0
+        if resto != int(valor_limpo[9]):
+            raise ValueError("CPF inválido")
+            
+        # Validação do segundo dígito verificador
+        soma = sum(int(valor_limpo[i]) * (11 - i) for i in range(10))
+        resto = (soma * 10) % 11
+        if resto in (10, 11):
+            resto = 0
+        if resto != int(valor_limpo[10]):
+            raise ValueError("CPF inválido")
+        
+        self.__cpf = valor_limpo
 
     @property
     def telefone(self) -> str:
